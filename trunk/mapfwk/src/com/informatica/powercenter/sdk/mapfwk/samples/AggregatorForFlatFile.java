@@ -7,7 +7,6 @@
 package com.informatica.powercenter.sdk.mapfwk.samples;
 
 import com.informatica.powercenter.sdk.mapfwk.core.Mapping;
-import com.informatica.powercenter.sdk.mapfwk.core.PowerCenterCompatibilityFactory;
 import com.informatica.powercenter.sdk.mapfwk.core.RowSet;
 import com.informatica.powercenter.sdk.mapfwk.core.Session;
 import com.informatica.powercenter.sdk.mapfwk.core.Source;
@@ -15,12 +14,13 @@ import com.informatica.powercenter.sdk.mapfwk.core.Target;
 import com.informatica.powercenter.sdk.mapfwk.core.TransformField;
 import com.informatica.powercenter.sdk.mapfwk.core.TransformHelper;
 import com.informatica.powercenter.sdk.mapfwk.core.Workflow;
+import com.informatica.powercenter.sdk.mapfwk.powercentercompatibility.PowerCenterCompatibilityFactory;
 
 /**
  * 
  * 
  */
-public class Aggregator extends Base {
+public class AggregatorForFlatFile extends Base {
 	// /////////////////////////////////////////////////////////////////////////////////////
 	// Instance variables
 	// /////////////////////////////////////////////////////////////////////////////////////
@@ -59,7 +59,7 @@ public class Aggregator extends Base {
 		// SUM((UnitPrice * Quantity) * (100 - Discount1) / 100) grouped by
 		// OrderId
 		TransformField cost = new TransformField(
-				"number(15,0) total_cost = (SUM((UnitPrice * Quantity) * (100 - Discount) / 100))");
+				"decimal(15,0) total_cost = (SUM((UnitPrice * Quantity) * (100 - Discount) / 100))");
 		RowSet aggRS = (RowSet) helper.aggregate(dsqRS, cost,
 				new String[] { "OrderID" }, "agg_transform").getRowSets()
 				.get(0);
@@ -90,7 +90,7 @@ public class Aggregator extends Base {
 
 	public static void main(String args[]) {
 		try {
-			Aggregator aggregator = new Aggregator();
+			AggregatorForFlatFile aggregator = new AggregatorForFlatFile();
 			if (args.length > 0) {
 				if (aggregator.validateRunMode(args[0])) {
 					PowerCenterCompatibilityFactory compFactory = PowerCenterCompatibilityFactory.getInstance();

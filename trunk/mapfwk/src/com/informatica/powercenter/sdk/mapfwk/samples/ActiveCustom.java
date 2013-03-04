@@ -1,31 +1,34 @@
 /*
  * ActiveCustom.java Created on Jul 5, 2005.
- * 
+ *
  * Copyright 2004 Informatica Corporation. All rights reserved. INFORMATICA
  * PROPRIETARY/CONFIDENTIAL. Use is subject to license terms.
  */
 package com.informatica.powercenter.sdk.mapfwk.samples;
 
-import java.util.Vector;
-import com.informatica.powercenter.sdk.mapfwk.core.DataTypeConstants;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.informatica.powercenter.sdk.mapfwk.connection.SourceTargetType;
 import com.informatica.powercenter.sdk.mapfwk.core.Field;
-import com.informatica.powercenter.sdk.mapfwk.core.FieldConstants;
+import com.informatica.powercenter.sdk.mapfwk.core.FieldKeyType;
+import com.informatica.powercenter.sdk.mapfwk.core.FieldType;
 import com.informatica.powercenter.sdk.mapfwk.core.GroupSet;
-import com.informatica.powercenter.sdk.mapfwk.core.GroupSetConstants;
+import com.informatica.powercenter.sdk.mapfwk.core.GroupType;
 import com.informatica.powercenter.sdk.mapfwk.core.Mapping;
 import com.informatica.powercenter.sdk.mapfwk.core.OutputSet;
 import com.informatica.powercenter.sdk.mapfwk.core.RowSet;
 import com.informatica.powercenter.sdk.mapfwk.core.Session;
 import com.informatica.powercenter.sdk.mapfwk.core.Source;
-import com.informatica.powercenter.sdk.mapfwk.core.SourceTargetTypes;
 import com.informatica.powercenter.sdk.mapfwk.core.Target;
 import com.informatica.powercenter.sdk.mapfwk.core.TransformHelper;
 import com.informatica.powercenter.sdk.mapfwk.core.TransformationConstants;
+import com.informatica.powercenter.sdk.mapfwk.core.TransformationDataTypes;
 import com.informatica.powercenter.sdk.mapfwk.core.Workflow;
 
 /**
- * 
- * 
+ *
+ *
  */
 public class ActiveCustom extends Base {
     // ////////////////////////////////////////////////////////////////
@@ -39,31 +42,31 @@ public class ActiveCustom extends Base {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.informatica.powercenter.sdk.mapfwk.samples.Base#createSources()
      */
     protected void createSources() {
-        jobSourceObj = this.createJobSource();
-        folder.addSource( jobSourceObj );
-        employeeSourceObj = this.createEmployeeSource();
-        folder.addSource( employeeSourceObj );
-    }
+		jobSourceObj = this.createOracleJobSource("Oracle_Source");
+		folder.addSource(jobSourceObj);
+		employeeSourceObj = this.createEmployeeSource();
+		folder.addSource(employeeSourceObj);
+	}
 
     /*
-     * (non-Javadoc)
-     * 
-     * @see com.informatica.powercenter.sdk.mapfwk.samples.Base#createTargets()
-     */
+	 * (non-Javadoc)
+	 *
+	 * @see com.informatica.powercenter.sdk.mapfwk.samples.Base#createTargets()
+	 */
     protected void createTargets() {
-        targetObj = this.createRelationalTarget( SourceTargetTypes.RELATIONAL_TYPE_ORACLE,
+        targetObj = this.createRelationalTarget( SourceTargetType.Oracle,
                 "PMDP_COLUMN_7" );
-        targetObj1 = this.createRelationalTarget( SourceTargetTypes.RELATIONAL_TYPE_ORACLE,
+        targetObj1 = this.createRelationalTarget( SourceTargetType.Oracle,
                 "PMDP_COLUMN_8" );
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.informatica.powercenter.sdk.mapfwk.samples.Base#createMappings()
      */
     protected void createMappings() throws Exception {
@@ -78,18 +81,18 @@ public class ActiveCustom extends Base {
         RowSet dsqRowSet2 = (RowSet) helper.sourceQualifier( this.employeeSourceObj ).getRowSets()
                 .get( 0 );
         // Two more fields are added
-        GroupSet inputGroupSet1 = new GroupSet( dsqRowSet1, "Input1", GroupSetConstants.INPUTGROUP );
-        GroupSet inputGroupSet2 = new GroupSet( dsqRowSet2, "Input2", GroupSetConstants.INPUTGROUP );
+        GroupSet inputGroupSet1 = new GroupSet( dsqRowSet1, "Input1", GroupType.INPUT );
+        GroupSet inputGroupSet2 = new GroupSet( dsqRowSet2, "Input2", GroupType.INPUT );
         GroupSet outputGroupSet1 = new GroupSet( this.getUpdDimCTFields(), "Output1",
-                GroupSetConstants.OUTPUTGROUP );
+                GroupType.OUTPUT);
         GroupSet outputGroupSet2 = new GroupSet( this.getCTOUTFields(), "Output2",
-                GroupSetConstants.OUTPUTGROUP );
-        Vector vec = new Vector();
-        vec.add( inputGroupSet1 );
-        vec.add( outputGroupSet1 );
-        vec.add( inputGroupSet2 );
-        vec.add( outputGroupSet2 );
-        OutputSet outf = (OutputSet) helper.custom( vec, TransformationConstants.ACTIVE_CUSTOM,
+                GroupType.OUTPUT );
+        List<GroupSet> list = new ArrayList<GroupSet>();
+        list.add( inputGroupSet1 );
+        list.add( outputGroupSet1 );
+        list.add( inputGroupSet2 );
+        list.add( outputGroupSet2 );
+        OutputSet outf = (OutputSet) helper.custom( list, TransformationConstants.ACTIVE_CUSTOM,
                 "ACTIVE_CUSTOM_TRANSFORM" );
         RowSet updDimOutput1 = (RowSet) outf.getRowSet( "Output1" );
         RowSet updDimOutput2 = (RowSet) outf.getRowSet( "Output2" );
@@ -100,7 +103,7 @@ public class ActiveCustom extends Base {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.informatica.powercenter.sdk.mapfwk.samples.Base#createSession()
      */
     protected void createSession() throws Exception {
@@ -111,7 +114,7 @@ public class ActiveCustom extends Base {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.informatica.powercenter.sdk.mapfwk.samples.Base#createWorkflow()
      */
     protected void createWorkflow() throws Exception {
@@ -121,27 +124,27 @@ public class ActiveCustom extends Base {
         folder.addWorkFlow( workflow );
     }
 
-    private Vector getUpdDimCTFields() {
-        Vector vec = new Vector();
-        Field profileRunKeyField = new Field( "JOB_ID", "JOB_ID", "", DataTypeConstants.INTEGER,
-                "10", "0", FieldConstants.NOT_A_KEY, Field.FIELDTYPE_SOURCE, false );
-        vec.add( profileRunKeyField );
-        Field sfnField = new Field( "JOB_TITLE", "JOB_TITLE", "", DataTypeConstants.INTEGER, "10",
-                "0", FieldConstants.NOT_A_KEY, Field.FIELDTYPE_SOURCE, false );
-        vec.add( sfnField );
-        return vec;
+    private List<Field> getUpdDimCTFields() {
+        List<Field> list = new ArrayList<Field>();
+        Field profileRunKeyField = new Field( "JOB_ID", "JOB_ID", "", TransformationDataTypes.INTEGER,
+                "10", "0", FieldKeyType.NOT_A_KEY, FieldType.TRANSFORM, false );
+        list.add( profileRunKeyField );
+        Field sfnField = new Field( "JOB_TITLE", "JOB_TITLE", "", TransformationDataTypes.INTEGER, "10",
+                "0", FieldKeyType.NOT_A_KEY, FieldType.TRANSFORM, false );
+        list.add( sfnField );
+        return list;
     }
 
-    private Vector getCTOUTFields() {
-        Vector vec = new Vector();
+    private List<Field> getCTOUTFields() {
+        List<Field> list = new ArrayList<Field>();
         Field profileRunKeyField = new Field( "EmployeeID", "EmployeeID", "",
-                DataTypeConstants.INTEGER, "10", "0", FieldConstants.NOT_A_KEY,
-                Field.FIELDTYPE_SOURCE, false );
-        vec.add( profileRunKeyField );
-        Field sfnField = new Field( "SFN", "SFN_O_@@@", "", DataTypeConstants.INTEGER, "10", "0",
-                FieldConstants.NOT_A_KEY, Field.FIELDTYPE_SOURCE, false );
-        vec.add( sfnField );
-        return vec;
+                TransformationDataTypes.INTEGER, "10", "0", FieldKeyType.NOT_A_KEY,
+                FieldType.TRANSFORM, false );
+        list.add( profileRunKeyField );
+        Field sfnField = new Field( "SFN", "SFN_O_@@@", "", TransformationDataTypes.INTEGER, "10", "0",
+                FieldKeyType.NOT_A_KEY, FieldType.TRANSFORM, false );
+        list.add( sfnField );
+        return list;
     }
 
     /**

@@ -35,7 +35,7 @@ public class ExpParse {
         // TODO code application logic here
         // String to be scanned to find the pattern.
         String line = "IIF(NOt (TO_INTEGER(INDEXOF(RTRIM(FULL_NAME1),'JR','SR','DR','II','III','IV','MD',1)) > 0 AND 0>1),SUBSTR(RTRIM(FULL_NAME1),0,INSTR(RTRIM(FULL_NAME3),' ',0,1)),IIF(INSTR(RTRIM(FULL_NAME4),' ',0,2) > 0,SUBSTR(RTRIM(FULL_NAME5),0,INSTR(RTRIM(FULL_NAME6),' ',0,2)),SUBSTR(RTRIM(FULL_NAME7),0,INSTR(RTRIM(FULL_NAME8),' ',0,1))))";
-        line = " COUNTRY_ID_1||COUNTRY_NAME_1 ";
+        //line = " COUNTRY_ID_1||COUNTRY_NAME_1 ";
         //String pattern = "[=,{(|+*/ ;-]+([a-zA-Z_]+[a-zA-Z_0-9.]+)[=,}) +/*;|&-]+";
         for(String col:ExpParse.getColumns(line)){
             System.out.println("Match: " + col);
