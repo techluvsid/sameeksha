@@ -27,8 +27,8 @@ public class Pmrep {
         InputStream stdout = null;
         //Runtime.getRuntime().exec(line, args, null) 
         // launch EXE and grab stdin/stdout and stderr
-        String[] env={"INFA_DOMAINS_FILE=C:\\Informatica\\PowerCenterClient\\domains.infa"};
-        Process process = Runtime.getRuntime().exec("C:\\Informatica\\PowerCenterClient\\client\\bin\\pmrep.exe",env,new File("C:\\Informatica\\PowerCenterClient\\client\\bin\\temp_cache"));
+        String[] env={"INFA_DOMAINS_FILE=C:\\Informatica\\9.1.0\\domains.infa"};
+        Process process = Runtime.getRuntime().exec("C:\\Informatica\\9.1.0\\clients\\PowerCenterClient\\client\\bin\\pmrep.exe",env,new File("C:\\Informatica\\temp_cache"));
         stdin = process.getOutputStream();
         stderr = process.getErrorStream();
         stdout = process.getInputStream();
@@ -39,7 +39,7 @@ public class Pmrep {
         stdin.write(line.getBytes());
         stdin.flush();
         
-        line = "connect -r infa_rep -d Domain_Dev -n admin -x admin" + "\n";
+        line = "connect -r infa_rep -d Domain_envy -n rishav -x admin" + "\n";
         stdin.write(line.getBytes());
         stdin.flush();
         
