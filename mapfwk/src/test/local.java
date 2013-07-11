@@ -4,17 +4,15 @@
  */
 package test;
 
-import com.informatica.powercenter.sdk.mapfwk.connection.ConnectionObject;
 import com.informatica.powercenter.sdk.mapfwk.core.Folder;
+import com.informatica.powercenter.sdk.mapfwk.core.IOutputField;
 import com.informatica.powercenter.sdk.mapfwk.core.MapFwkRetrieveContext;
 import com.informatica.powercenter.sdk.mapfwk.core.Mapping;
 import com.informatica.powercenter.sdk.mapfwk.core.Mapplet;
 import com.informatica.powercenter.sdk.mapfwk.core.Source;
 import com.informatica.powercenter.sdk.mapfwk.core.Target;
 import com.informatica.powercenter.sdk.mapfwk.core.Transformation;
-import com.informatica.powercenter.sdk.mapfwk.repository.PmrepRepositoryConnectionManager;
 import com.informatica.powercenter.sdk.mapfwk.repository.Repository;
-import com.informatica.powercenter.sdk.mapfwk.repository.RepositoryConnectionManager;
 import java.util.List;
 
 /**
@@ -31,7 +29,7 @@ public class local {
         Repository rep = new Repository();
         rep.retrieveRepo(new MapFwkRetrieveContext(MapFwkRetrieveContext.INPUT_FORMAT_XML,
                 MapFwkRetrieveContext.INPUT_FORMAT_XML,
-                "D:\\temp\\M_CUSTOMERS_MASKING.xml"));
+                "D:\\temp\\XMLs\\M_CUSTOMERS_MASKING.xml"));
 
 
         List<Folder> folders = rep.getAddedFolders();
@@ -57,6 +55,7 @@ public class local {
             int listSize = listOfTransformations.size();
             System.out.println(" ***** List of Reusable Transformations ******");
             for (int j = 0; j < listSize; j++) {
+                
                 System.out.println((listOfTransformations.get(j)).getName());
             }
         }
@@ -90,6 +89,11 @@ public class local {
 
                 System.out.println(" >>>***** List of Transformations ******");
                 for (int k = 0; k < listOfTransformations.size(); k++) {
+                    Transformation t=(listOfTransformations.get(k));
+                    for(Object o:t.getOutFields()){
+                        IOutputField f=(IOutputField)o;
+                        System.out.println("      "+f.getField().getName());
+                    }
                     System.out.println("   "+(listOfTransformations.get(k)).getName());
                     
                 }
